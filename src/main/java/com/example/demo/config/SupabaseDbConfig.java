@@ -11,10 +11,19 @@ public class SupabaseDbConfig {
 
     @Bean
     public DataSource dataSource() {
-        Dotenv dotenv = Dotenv.configure().filename("pass.env").load();
-        String dbUrl = dotenv.get("DB_URL");
-        String dbUser = dotenv.get("DB_USERNAME");
-        String dbPassword = dotenv.get("DB_PASSWORD");
+        // Prefer system environment variables
+        String dbUrl = System.getenv("DB_URL");
+        String dbUser = System.getenv("DB_USERNAME");
+        String dbPassword = System.getenv("DB_PASSWORD");
+
+        // If not set, fallback to dotenv (pass.env)
+        if (dbUrl == null || dbUser == null || dbPassword == null) {
+            Dotenv dotenv = Dotenv.configure().filename("pass.env").ignoreIfMissing().load();
+            if (dbUrl == null) dbUrl = dotenv.get("DB_URL");
+            if (dbUser == null) dbUser = dotenv.get("DB_USERNAME");
+            if (dbPassword == null) dbPassword = dotenv.get("DB_PASSWORD");
+        }
+
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setJdbcUrl(dbUrl);
         dataSource.setUsername(dbUser);
