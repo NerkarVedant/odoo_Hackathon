@@ -1,34 +1,37 @@
 package com.example.demo.config;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import io.github.cdimascio.dotenv.Dotenv;
+import javax.sql.DataSource;
 
 @Configuration
 public class SupabaseDbConfig {
 
+    @Value("${DB_URL}")
+    private String dbUrl;
+
+    @Value("${DB_USERNAME}")
+    private String dbUser;
+
+    @Value("${DB_PASSWORD}")
+    private String dbPassword;
+
     @Bean
     public DataSource dataSource() {
-        // Prefer system environment variables
-        String dbUrl = System.getenv("DB_URL");
-        String dbUser = System.getenv("DB_USERNAME");
-        String dbPassword = System.getenv("DB_PASSWORD");
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(dbUrl);
+        config.setUsername(dbUser);
+        config.setPassword(dbPassword);
+        config.setDriverClassName("org.postgresql.Driver");
 
-        // If not set, fallback to dotenv (pass.env)
-        if (dbUrl == null || dbUser == null || dbPassword == null) {
-            Dotenv dotenv = Dotenv.configure().filename("pass.env").ignoreIfMissing().load();
-            if (dbUrl == null) dbUrl = dotenv.get("DB_URL");
-            if (dbUser == null) dbUser = dotenv.get("DB_USERNAME");
-            if (dbPassword == null) dbPassword = dotenv.get("DB_PASSWORD");
-        }
+        // Recommended for Supabase/Cloud envs to prevent connection drops
+        config.setMaximumPoolSize(10);
+        config.setIdleTimeout(300000);
+        config.setConnectionTimeout(20000);
 
-        HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl(dbUrl);
-        dataSource.setUsername(dbUser);
-        dataSource.setPassword(dbPassword);
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        return dataSource;
+        return new HikariDataSource(config);
     }
 }
