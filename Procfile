@@ -1,1 +1,1 @@
-web: java -jar target/demo-0.0.1-SNAPSHOT.jar --server.port=${PORT:8080}
+web: java -jar target/*.jar --server.port=${PORT}

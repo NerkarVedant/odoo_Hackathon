@@ -50,6 +50,7 @@ Thumbs.db
 # Environment files
 .env
 pass.env
+application-local.properties
 
 # Others
 *.swp

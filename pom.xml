@@ -36,9 +36,12 @@
 		</dependency>
 
 
+
+		<!-- Lombok: pinned to 1.18.36 for Java 17+ compatibility (fixes TypeTag UNKNOWN error) -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>1.18.36</version>
 			<optional>true</optional>
 		</dependency>
 
@@ -83,7 +86,7 @@
 			<version>0.12.6</version>
 		</dependency>
 
-		<!--		jackson is the default JSON library for Spring Boot 3.x, but if you want to use JJWT with Jackson, you need to include the following dependencies:-->
+		<!--	jackson is the default JSON library for Spring Boot 3.x, but if you want to use JJWT with Jackson, you need to include the following dependencies:-->
 
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
@@ -123,6 +126,7 @@
 
 
 
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
@@ -152,10 +156,12 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
+					<release>${java.version}</release>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
+							<version>1.18.36</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
